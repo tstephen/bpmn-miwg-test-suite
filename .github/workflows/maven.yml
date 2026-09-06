@@ -30,11 +30,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Deploy artifacts
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-      run: mvn -P analysis --batch-mode deploy --file pom.xml
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # use github artefact upload instead of maven
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: bpmn-miwg-test-suite
+        path: |
+          target/*.jar
+    #- name: Deploy artifacts
+    #  if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    #  run: mvn -P analysis --batch-mode deploy --file pom.xml
+    #  env:
+    #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload static files as artifact
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -56,16 +63,16 @@ jobs:
         publish_branch: gh-pages
 
   # Deployment job
-  # deploy:
-  #   environment:
-  #     name: github-pages
+  deploy:
+    environment:
+      name: github-pages
   #     url: ${{ steps.deployment.outputs.page_url }}
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     id-token: write
-  #     pages: write
-  #   needs: build
-  #   steps:
-  #     - name: Deploy to GitHub Pages
-  #       id: deployment
-  #       uses: actions/deploy-pages@v4
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      pages: write
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
