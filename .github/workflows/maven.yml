@@ -36,6 +36,12 @@ jobs:
       with:
         name: bpmn-miwg-test-suite
         path: target/test-suite-*.jar
+
+    - name: Upload reference-only artifact
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: bpmn-miwg-test-suite-reference-only
+        path: target/test-suite-*-reference-only.jar
         archive: false
     #- name: Deploy artifacts
     #  if: github.event_name == 'push' && github.ref == 'refs/heads/master'
